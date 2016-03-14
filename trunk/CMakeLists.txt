@@ -13,7 +13,7 @@ set(APP_FUNCTION app/ts_file_distribute.cpp app/ts_file_distribute.h app/log.h a
 
 set(KERNEL_FUNCTION kernel/hls_decode_kernel.h)
 
-set(PROTOCOL_FUNCTION protocol/http.cpp protocol/http.h) 
+set(PROTOCOL_FUNCTION protocol/http.cpp protocol/http.h protocol/ts_packet.h protocol/ts_packet.cpp) 
 set(SOURCE_FILES main.cpp ${APP_FUNCTION} ${KERNEL_FUNCTION} ${PROTOCOL_FUNCTION})
 
 set(FLV_BINARY_DIR "./objs/")

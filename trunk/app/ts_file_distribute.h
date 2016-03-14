@@ -8,7 +8,7 @@
 #include "../kernel/hls_decode_kernel.h"
 #include <fstream>
 
-static const int32_t MAX_LENGTH_OF_READ_MESSAGE_FROM_FILE = 1024;
+static const int32_t MAX_LENGTH_OF_READ_MESSAGE_FROM_FILE = 188;
 
 class TsFileDistribute
 {
