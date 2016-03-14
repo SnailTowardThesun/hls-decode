@@ -47,6 +47,6 @@ bool TsHlsDistribute::distribute_hls_stream(string url)
 		return false;
 	}
 	// get m3u8 file
-	http_->get_msg_by_line();
+	http_->get_msg_by_content_size();
 	return true;
 }

@@ -33,6 +33,7 @@ public:
 	bool release();
 	bool send_GET_method(string msg);
 	char* get_msg_by_content_size();
+	bool get_msg_by_size(int size,char* buffer);
 };
 
 #endif

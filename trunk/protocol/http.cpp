@@ -107,3 +107,16 @@ char* http::get_msg_by_content_size()
 	}
 	return message_read_from_http_;
 }
+
+bool http::get_msg_by_size(int size,char* buffer)
+{
+	int data_size_left = size,data_size_to_read = size;
+	while(data_size_left > 0)
+	{
+		data_size_to_read = data_size_left < MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP ? data_size_left:data_size_left - MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP;
+		if((int)fread(buffer+size,1,data_size_to_read,http_file_p_) != data_size_to_read) break;
+		data_size_left -= data_size_to_read;
+	}
+	return true;
+}
+
