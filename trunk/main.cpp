@@ -9,9 +9,9 @@ int main(int argc, char* argv[])
 	}
 
 	HlsLog::getInstance()->log("trace","main.cpp","ready to decode");
-	//TsHlsDistribute dis;
-	//dis.distribute_hls_stream("http://192.168.9.237:8080/live/livestream.m3u8");
-	TsFileDistribute dis;
-	dis.distribute_one_file("test.ts");
+	TsHlsDistribute dis;
+	dis.distribute_hls_stream("http://192.168.1.237:8080/live/livestream.m3u8");
+	//TsFileDistribute dis;
+	//dis.distribute_one_file("test.ts");
 	return 0;
 }

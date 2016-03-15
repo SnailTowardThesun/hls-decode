@@ -55,7 +55,7 @@ bool http::initialize(string host_ip,string host_port)
 	HlsLog::getInstance()->log("trace","protocol/http.cpp","success to connect to server");
 	//use the standerd io stream to send and get message
 	http_file_p_ = fdopen(socket_,"rw+");
-	if(http_file_p_ == nullptr)	
+	if(http_file_p_ == nullptr)
 	{
 		HlsLog::getInstance()->log("trace","protocol/http.cpp","fail to fdopen the socket");
 		return false;
@@ -110,13 +110,21 @@ char* http::get_msg_by_content_size()
 
 bool http::get_msg_by_size(int size,char* buffer)
 {
+	/*
 	int data_size_left = size,data_size_to_read = size;
+	int current_pos = 0;
 	while(data_size_left > 0)
 	{
 		data_size_to_read = data_size_left < MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP ? data_size_left:data_size_left - MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP;
-		if((int)fread(buffer+size,1,data_size_to_read,http_file_p_) != data_size_to_read) break;
+		if((int)fread(buffer+current_pos,1,data_size_to_read,http_file_p_) != data_size_to_read) break;
 		data_size_left -= data_size_to_read;
+		current_pos += data_size_to_read;
 	}
+	if(feof(http_file_p_)) return false;
+	*/
+	if(feof(http_file_p_)) return false;
+	if((int)fread(buffer,1,size,http_file_p_) < size) return false;
+	return true;
 	return true;
 }
 

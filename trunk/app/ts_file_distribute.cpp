@@ -36,8 +36,7 @@ bool TsFileDistribute::distribute_one_file(string file_name)
 	TsPacket::Packet pack;
 	while(file_stream_.read(message_read_from_file_,MAX_LENGTH_OF_READ_MESSAGE_FROM_FILE))
 	{
-		//HlsLog::getInstance()->log(\
-		//		"trace","ts_file_distribute.cpp-distribute_one_file","get one message");
+		HlsLog::getInstance()->log("","","");
 		// parser the message we read from file
 		pack.distribute_one_packet(message_read_from_file_,MAX_LENGTH_OF_READ_MESSAGE_FROM_FILE);
 		// seek the next frame

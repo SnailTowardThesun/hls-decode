@@ -11,4 +11,9 @@
 #include "../app/log.h"
 using namespace std;
 #include <string.h>
+
+#define int32_t long
+#define int16_t unsigned short
+#define int8_t unsigned char
+
 #endif

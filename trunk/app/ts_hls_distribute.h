@@ -15,6 +15,7 @@ public:
 	virtual ~TsHlsDistribute();
 private:
 	http* http_;
+	vector<string> ts_stream_list_;
 protected:
 	bool parse_url(string url);
 public:

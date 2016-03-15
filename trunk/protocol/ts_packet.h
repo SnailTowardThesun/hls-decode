@@ -87,6 +87,8 @@ namespace TsPacket
 		pAdaptationExtensionOptionalFieldFormat adaptation_extension_optional_field_;
 		// payload data
 		unsigned char* payload_data_;
+	protected:
+		bool decode_packet(const char* message);
 	public:
 		bool distribute_one_packet(const char* msg, int msg_size);
 	};
