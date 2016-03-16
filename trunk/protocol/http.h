@@ -31,7 +31,8 @@ private:
 public:
 	bool initialize(string host_ip, string host_prot);
 	bool release();
-	bool send_GET_method(string msg);
+	bool send_GET_method_with_response(string msg);
+	bool send_GET_method_without_response(string msg);
 	char* get_msg_by_content_size();
 	bool get_msg_by_size(int size,char* buffer);
 };

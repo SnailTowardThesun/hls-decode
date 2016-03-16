@@ -7,7 +7,6 @@ int main(int argc, char* argv[])
 	{
 		cout<<argv[0]<<endl;
 	}
-
 	HlsLog::getInstance()->log("trace","main.cpp","ready to decode");
 	TsHlsDistribute dis;
 	dis.distribute_hls_stream("http://192.168.1.237:8080/live/livestream.m3u8");

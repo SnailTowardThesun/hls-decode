@@ -63,7 +63,7 @@ bool http::initialize(string host_ip,string host_port)
 	return true;
 }
 
-bool http::send_GET_method(string msg)
+bool http::send_GET_method_without_response(string msg)
 {
 	if(msg.empty())
 	{
@@ -82,16 +82,35 @@ bool http::send_GET_method(string msg)
 	request += "Host: "+host_ip_+":"+host_port_+"\r\n\r\n";
 	// send the request and deal with the response
 	fwrite(request.c_str(),1,request.size(),http_file_p_);
+
+	return true;
+}
+
+bool http::send_GET_method_with_response(string msg)
+{
+	send_GET_method_without_response(msg);
 	// deal with the response
+	string content_key_word = "Content-Length: ";
+	string message_get;
+	size_t size = 0;
+	string str_length;
+	memset(message_read_from_http_,0,MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP);
 	while(message_read_from_http_[0] != '\r' && message_read_from_http_[1] != '\n')
 	{
 		if(fgets(message_read_from_http_,MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP,http_file_p_)!=nullptr)
 		{
 			cout<<message_read_from_http_<<endl;
+			message_get = message_read_from_http_;
+			if((size = message_get.find(content_key_word)) != string::npos)
+			{
+				str_length.assign(message_get,content_key_word.length(),message_get.length() - content_key_word.length() - 2);
+			}
 		}
+		else
+			break;
 	}
 	//get the content size
-	content_size_ = 358;
+	content_size_ = atoi(str_length.c_str());
 	return true;
 }
 
@@ -124,7 +143,6 @@ bool http::get_msg_by_size(int size,char* buffer)
 	*/
 	if(feof(http_file_p_)) return false;
 	if((int)fread(buffer,1,size,http_file_p_) < size) return false;
-	return true;
 	return true;
 }
 
