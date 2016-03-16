@@ -9,7 +9,7 @@ else( CMAKE_BUILD_TYPE STREQUAL "Debug" )
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  -O2 -pthread -fopenmp")
 endif( CMAKE_BUILD_TYPE STREQUAL "Debug" )
 
-set(APP_FUNCTION app/ts_file_distribute.cpp app/ts_file_distribute.h app/log.h app/log.cpp app/ts_hls_distribute.h app/ts_hls_distribute.cpp)
+set(APP_FUNCTION app/ts_file_distribute.cpp app/ts_file_distribute.h app/log.h app/log.cpp app/ts_hls_distribute.h app/ts_hls_distribute.cpp app/hd_app_socket.cpp app/hd_app_socket.h)
 
 set(KERNEL_FUNCTION kernel/hls_decode_kernel.h)
 

@@ -5,14 +5,9 @@
 #define HLS_DECODE_HTTP_H
 
 #include "../kernel/hls_decode_kernel.h"
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <arpa/inet.h>
-#include <csignal>
+#include "../app/hd_app_socket.h"
 #include <stdio.h>
-
+#define USING_SOCKET
 static const int32_t MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP = 1024;
 static const int32_t DEFAULT_HTTP_PORT = 80;
 
@@ -28,6 +23,10 @@ private:
 	int content_size_;
 	string host_ip_;
 	string host_port_;
+
+	AppSocket::TcpSocket tcp_socket_;
+	string message_buffer_;
+	int data_left_;
 public:
 	bool initialize(string host_ip, string host_prot);
 	bool release();
