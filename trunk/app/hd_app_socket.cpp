@@ -2,7 +2,7 @@
 // Created by Hank 2016/3/16
 //
 #include "hd_app_socket.h"
-
+#include <boost/array.hpp>
 using namespace AppSocket;
 
 TcpSocket::TcpSocket() : socket_(-1),
@@ -59,6 +59,7 @@ int TcpSocket::sendMsg(std::string msg)
 
 int TcpSocket::recvMsg(std::string& msg, int size)
 {
+	boost::array<int,4> arr = {{1,2,3,4}};
 	if(socket_ == -1 || !is_connected_) return -1;
 	if(!msg.empty()) msg.clear();
 	int data_left = size,data_to_read = 0;

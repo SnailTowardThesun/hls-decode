@@ -48,12 +48,13 @@ bool TsHlsDistribute::distribute_hls_stream(string url)
 		return false;
 	}
 	// get m3u8 file
-	char* m3u8_buffer = http_->get_msg_by_content_size();
+	string  m3u8_buffer;
+	http_->get_msg_by_content_size(m3u8_buffer);
 	m3u8file m3u8;
-	if(m3u8_buffer == nullptr) return false;
+	if(m3u8_buffer.empty()) return false;
 	if(!m3u8.parse_m3u8(m3u8_buffer,ts_stream_list_)) return false;
-	char* ts = new char[188];
 	TsPacket::Packet pack;
+	string ts;
 	for(auto i :ts_stream_list_)
 	{
 		string str = "/live/"+i;
@@ -63,10 +64,10 @@ bool TsHlsDistribute::distribute_hls_stream(string url)
 		while(http_->get_msg_by_size(188,ts))
 		{
 			cout<<"this is NO."<<temp++<<endl;
-			pack.distribute_one_packet(ts,188);
+			pack.distribute_one_packet(ts.c_str(),188);
 			cout<<"decode one header"<<endl;
 		}
+		break;
 	}
-	delete[] ts;
 	return true;
 }

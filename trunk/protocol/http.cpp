@@ -7,7 +7,8 @@ using namespace AppSocket;
 http::http():http_file_p_(nullptr),
 	message_read_from_http_(nullptr),
 	socket_(-1),
-	data_left_(0)
+	data_left_(0),
+	data_current_pos_(0)
 {
 	message_read_from_http_ = new char[MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP];
 }
@@ -93,6 +94,32 @@ bool http::send_GET_method_without_response(string msg)
 	return true;
 }
 
+bool http::parse_the_http_respnse(std::string http_response)
+{
+	if(http_response.empty()) return false;
+	const string end_line = "\r\n";
+	int current_pos = 0;
+	const string content_key_word = "Content-Length: ";// inorder to get content length
+	size_t size = 0;
+	string str_length;
+	while(current_pos < (int)http_response.size())
+	{
+		size_t size1 = 0;
+		string line_str;
+		if((size1 = http_response.find_first_of(end_line,current_pos)) == string::npos) break;
+		line_str.assign(http_response,current_pos,size1 - current_pos);
+		if((size = line_str.find(content_key_word)) != string::npos)
+		{
+			str_length.assign(line_str,content_key_word.length(),line_str.length() - content_key_word.length());
+		}
+		std::cout<<line_str<<std::endl;
+		current_pos = size1 + 2;
+	}
+	//get the content size
+	content_size_ = atoi(str_length.c_str());
+	return true;
+}
+
 bool http::send_GET_method_with_response(string msg)
 {
 	send_GET_method_without_response(msg);
@@ -120,28 +147,27 @@ bool http::send_GET_method_with_response(string msg)
 	//get the content size
 	content_size_ = atoi(str_length.c_str());
 #else
-	// decode the reponse we got
-	if(tcp_socket_.recvMsg(message_buffer_,AppSocket::DEFAULT_SOCKET_TIME_OUT) < 1) return false;
-
-	size_t size = message_buffer_.find_first_of("\r\n\r\n");
-	if(size == string::npos) return false;
-	data_left_ -= message_buffer_.size() - size - 4;
+	// recv the response and parse it
+	if((data_left_ = tcp_socket_.recvMsg(message_buffer_,AppSocket::DEFAULT_SOCKET_TIME_OUT)) < 1) return false;
+	data_current_pos_ = 0;
+	// get http header
+	const string end_of_http_response  = "\r\n\r\n";
+	size_t size = 0;
+	if((size = message_buffer_.find(end_of_http_response)) == string::npos) return false;
 	string http_response;
 	http_response.assign(message_buffer_,0,size + 4);
-	while(size > 0)
-	{
-		size_t size1 = 0;
-		string line_str;
-	}
+	data_left_ -= size + 4;//we got the size + 4 Bytes of the string
+	data_current_pos_ += size + 4;
+	return parse_the_http_respnse(http_response);
 #endif
 	return true;
 }
 
-char* http::get_msg_by_content_size()
+bool http::get_msg_by_content_size(string& buffer)
 {
 	if(content_size_ == 0)
 	{
-		return nullptr;
+		return false;
 	}
 #ifndef USING_SOCKET
 	if(fread(message_read_from_http_,1,content_size_,http_file_p_)!=0)
@@ -149,17 +175,43 @@ char* http::get_msg_by_content_size()
 		cout<<message_read_from_http_<<endl;
 	}
 #else
-
+	return get_msg_by_size(content_size_,buffer);
 #endif
-	return message_read_from_http_;
 }
 
-bool http::get_msg_by_size(int size,char* buffer)
+bool http::get_msg_by_size(int size,string& buffer)
 {
 #ifndef USING_SOCKET
 	if(feof(http_file_p_)) return false;
 	if((int)fread(buffer,1,size,http_file_p_) < size) return false;
 #else
+	if(size < data_left_)
+	{
+		buffer.assign(message_buffer_,data_current_pos_,size);
+		data_left_ -= size;
+		data_current_pos_ += size;
+		return true;
+	}
+	// first get the left data
+	int rest_data = size - data_left_;
+	buffer.assign(message_buffer_,data_current_pos_,data_left_);
+	data_left_ = 0;
+	data_current_pos_ = message_buffer_.size();
+	while (rest_data > 0)
+	{
+		// get message from http server
+		if((data_left_ = tcp_socket_.recvMsg(message_buffer_,AppSocket::DEFAULT_SOCKET_TIME_OUT)) < 1) return false;
+		data_current_pos_ = 0;
+		// copy the rest to buffer
+		int data_to_copy = data_left_ < rest_data ? data_left_ : rest_data;
+		buffer.append(message_buffer_,data_current_pos_,data_to_copy);
+		rest_data -= data_to_copy;
+		data_left_ -= data_to_copy;
+		data_current_pos_ += data_to_copy;
+	}
+	std::cout<<buffer.size()<<std::endl;
+	std::cout<<buffer<<std::endl;
+	buffer = message_buffer_;
 #endif
 	return true;
 }
