@@ -7,7 +7,7 @@
 #include "../kernel/hls_decode_kernel.h"
 #include "../app/hd_app_socket.h"
 #include <stdio.h>
-#define USING_SOCKET
+//#define USING_SOCKET
 static const int32_t MAX_LENGTH_OF_READ_MESSAGE_FROM_HTTP = 1024;
 static const int32_t DEFAULT_HTTP_PORT = 80;
 
@@ -34,6 +34,7 @@ public:
 	bool send_GET_method_without_response(string msg);
 	char* get_msg_by_content_size();
 	bool get_msg_by_size(int size,char* buffer);
+	int get_content_size(){return content_size_;};
 };
 
 #endif

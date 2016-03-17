@@ -59,13 +59,23 @@ bool TsHlsDistribute::distribute_hls_stream(string url)
 		string str = "/live/"+i;
 		http_->send_GET_method_with_response(str);
 		cout<<endl<<"decode one ts file"<<endl;
-		int temp = 0;
+		int temp = http_->get_content_size() / 188;
+		for(int i = 0; i < temp; i++)
+		{
+			if(http_->get_msg_by_size(188,ts))
+			{
+				pack.distribute_one_packet(ts,188);
+//				cout<<"decode one header"<<endl;
+			}
+		}
+		/*
 		while(http_->get_msg_by_size(188,ts))
 		{
 			cout<<"this is NO."<<temp++<<endl;
 			pack.distribute_one_packet(ts,188);
 			cout<<"decode one header"<<endl;
 		}
+		*/
 	}
 	delete[] ts;
 	return true;
